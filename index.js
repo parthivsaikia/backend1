@@ -1,13 +1,13 @@
+require('dotenv').config()
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const app = express();
+const Note = require('./models/note')
 
 // Use CORS - allowing requests only from your deployed frontend
 app.use(
-  cors({
-    origin: "https://backend1-4eu5.onrender.com/", // Replace with your actual frontend Render URL
-  }),
+  cors()
 );
 
 // Serve static files from the 'dist' directory (your React build folder)
@@ -35,8 +35,11 @@ let notes = [
 
 // API routes
 app.get("/api/notes", (req, res) => {
-  res.json(notes);
-});
+  Note.find({}).then(response => {
+      res.json(response)
+    })
+  })
+
 
 app.get("/api/notes/:id", (req, res) => {
   const id = req.params.id;
@@ -83,7 +86,9 @@ app.get("*", (req, res) => {
 });
 
 // Define PORT (Render automatically sets it in production)
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+
